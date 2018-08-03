@@ -38,6 +38,7 @@ class FrontEndTestCase(TestCase):
             post = Post(title="Post %d Title" % count,
                         text="foo",
                         author=author)
+            # print(post.title)
             if count < 6:
                 # publish the first five posts
                 pubdate = self.now - self.timedelta * count
@@ -51,7 +52,22 @@ class FrontEndTestCase(TestCase):
         self.assertTrue("Recent Posts" in resp_text)
         for count in range(1, 11):
             title = "Post %d Title" % count
+            # print(title)
             if count < 6:
                 self.assertContains(resp, title, count=1)
             else:
                 self.assertNotContains(resp, title)
+
+    def test_details_only_published(self):
+        for count in range(1, 11):
+            # print(Post.objects.get(pk=count).title) # for debugging
+            title = "Post %d Title" % count
+            post = Post.objects.get(title=title)
+            # print(post.pk) # for debugging
+            resp = self.client.get('/posts/%d/' % post.pk)
+            # print(resp) # for debugging
+            if count < 6:
+                self.assertEqual(resp.status_code, 200)
+                self.assertContains(resp, title)
+            else:
+                self.assertEqual(resp.status_code, 404)
