@@ -6,15 +6,17 @@ from myblog.models import Category
 class CategoryInline(admin.TabularInline):
     model = Category.posts.through
 
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     inlines = [CategoryInline,]
 
 # Exclude posts from category admin window
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     exclude = ('posts',)
 
 # Register your models here.
 
-admin.site.register(Post, PostAdmin)
-admin.site.register(Category, CategoryAdmin)
+# admin.site.register(Post, PostAdmin)
+# admin.site.register(Category, CategoryAdmin)
 
